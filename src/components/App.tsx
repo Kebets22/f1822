@@ -1,13 +1,11 @@
 import React from 'react';
 import './App.css';
-import Button from './Button/Button';
+import ButtonState from './ButtonState/ButtonState';
 
 function App() {
   return (
     <div className="App">
-      <h3>This is React Applictation</h3>
-      <Button>Hello!</Button>
-      <Button>How are you?</Button>
+      <ButtonState/>
     </div>
   );
 }
