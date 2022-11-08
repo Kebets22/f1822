@@ -1,11 +1,10 @@
-import React from 'react';
 import './App.css';
-import ButtonState from './ButtonState/ButtonState';
+import UserCards from './Users/UserCards';
 
 function App() {
   return (
-    <div className="App">
-      <ButtonState/>
+    <div className=''>
+    <UserCards/>
     </div>
   );
 }
