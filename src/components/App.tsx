@@ -1,13 +1,12 @@
 import React from 'react';
 import './App.css';
-import ButtonState from './ButtonState/ButtonState';
+import Calculator from './Calculator/Calculator';
+
 
 function App() {
-  return (
-    <div className="App">
-      <ButtonState/>
-    </div>
-  );
-}
+  return(
+    <Calculator/>
+  )   
+};
 
 export default App;
