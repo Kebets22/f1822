@@ -1,4 +1,7 @@
+import axios from 'axios';
 import React, {ChangeEvent, FormEvent, useMemo, useState}from 'react';
+import { updateJsxSpreadAttribute } from 'typescript';
+import { IUser } from './interfaces';
 import {USERS} from './users';
 
 const UserCards = () => {
@@ -11,13 +14,17 @@ const UserCards = () => {
         address: '',
         website: '',
     }
-    const [users, setUsers] = useState(USERS);
+    const [users, setUsers] = useState<IUser[]>([]);
     const [userValue, setUserValue] = useState<any>(initialValue);
     const [search, setSearch] = useState<string>('');
     const [isShowEdit, setIsShowEdit] = useState<boolean>(false);
     const [newUserId, setNewUserId] = useState<number>(USERS.length + 1);
-    const deleteUser = (id: number) => {
+    const deleteUser = async (id: number) => {
+        const deleteUser = await axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`);
+        if( deleteUser.status == 200){
+        const confirm = window.confirm('Do you want delete this user?');
         setUsers(users.filter(user => user.id !== id));
+    }
     }
     const searchedUsers = useMemo(() =>{
         if(search){
@@ -31,18 +38,37 @@ const UserCards = () => {
         const value = event.target.value;
         setUserValue({...userValue, [field]: value})
     }
-    const addUser = (event: FormEvent<HTMLFormElement>) =>{
+    const addUser = async (event: FormEvent<HTMLFormElement>) =>{
         event.preventDefault();
-        const userValueWithId = {...userValue, id: newUserId}
-        setNewUserId(newUserId + 1);
-        setUsers([...users, userValueWithId]);
-        setUserValue(initialValue);
+        const responseData = await axios.post('https://jsonplaceholder.typicode.com/users', userValue);
+        if(responseData.data){
+            setUsers([...users, responseData.data]);
+            setUserValue(initialValue);
+        }
     }
-
+    const getAllUsers = async () =>{
+        //Async await
+        try{
+           const responseData = await axios.get('https://jsonplaceholder.typicode.com/users');
+           //const postUsers = axios.post('https://jsonplaceholder.typicode.com/users')
+           const users = responseData.data;
+           setUsers(users); 
+        } catch(err){
+            alert(err);
+        }
+        //PROMISE
+        //const usersData = axios.get('https://jsonplaceholder.typicode.com/users').then( res =>{
+        //    console.log(res.data);
+        //    setUsers(res.data);
+        //}) 
+    };
+    
     return(
         <div className="row row-cols-1 row-cols-md-3 g-4 mt-5">
             <div>
             <h1 className='text-center w-100'>User cards</h1>
+
+            <button className='btn btn-success m-5' onClick={() => getAllUsers()}>Get All Users</button>
             <button className='btn btn-success' onClick={() => setIsShowEdit(!isShowEdit)}>Show Form for Add user</button>
             {isShowEdit &&
                 <form onSubmit={event => addUser(event)}>
