@@ -82,7 +82,7 @@ const Posts = () => {
             <div className="card h-100">
                 <div className="card-body">
                     <p className="card-text">
-                        <p>{user.userId}</p>
+                        <p>{user.id}</p>
                         <p>{user.title}</p>
                         <p>{user.body}</p>
                     </p>
