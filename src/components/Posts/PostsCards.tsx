@@ -1,41 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from 'axios';
-import React, {ChangeEvent, FormEvent, useMemo, useState}from 'react';
-import { updateJsxSpreadAttribute } from 'typescript';
-import { IUser } from './interfaces';
-import {USERS} from './users';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { IPosts } from './interfaces';
+import { POSTS } from './posts';
 
-const UserCards = () => {
+const Posts = () => {
     const initialValue ={
-        name: '',
-        username: '',
-        email: '',
-        phone: '',
-        company: '',
-        address: '',
-        website: '',
+        userId: '',
+        id: '',
+        title: '',
+        body: '',
     }
-    const [users, setUsers] = useState<IUser[]>([]);
+    const [users, setUsers] = useState<IPosts[]>([]);
     const [userValue, setUserValue] = useState<any>(initialValue);
-    const [search, setSearch] = useState<string>('');
     const [isShowEdit, setIsShowEdit] = useState<boolean>(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [newUserId, setNewUserId] = useState<number>(USERS.length + 1);
+    const [newUserId, setNewUserId] = useState<number>(POSTS.length + 1);
     const deleteUser = async (id: number) => {
-        const deleteUser = await axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`);
+        const deleteUser = await axios.delete(`https://jsonplaceholder.typicode.com/posts${id}`);
         if( deleteUser.status === 200){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const confirm = window.confirm('Do you want delete this user?');
         setUsers(users.filter(user => user.id !== id));
     }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const searchedUsers = useMemo(() =>{
-        if(search){
-            return users.filter(user => user.username.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
-        }
-        return users;
-    }, [search, users]);
     
     const onChange = (event: ChangeEvent<HTMLInputElement>) =>{
         const field = event.target.id;
@@ -44,7 +31,7 @@ const UserCards = () => {
     }
     const addUser = async (event: FormEvent<HTMLFormElement>) =>{
         event.preventDefault();
-        const responseData = await axios.post('https://jsonplaceholder.typicode.com/users', userValue);
+        const responseData = await axios.post('https://jsonplaceholder.typicode.com/posts', userValue);
         if(responseData.data){
             setUsers([...users, responseData.data]);
             setUserValue(initialValue);
@@ -53,7 +40,7 @@ const UserCards = () => {
     const getAllUsers = async () =>{
         //Async await
         try{
-           const responseData = await axios.get('https://jsonplaceholder.typicode.com/users');
+           const responseData = await axios.get('https://jsonplaceholder.typicode.com/posts');
            //const postUsers = axios.post('https://jsonplaceholder.typicode.com/users')
            const users = responseData.data;
            setUsers(users); 
@@ -76,7 +63,7 @@ const UserCards = () => {
             <button className='btn btn-success' onClick={() => setIsShowEdit(!isShowEdit)}>Show Form for Add user</button>
             {isShowEdit &&
                 <form onSubmit={event => addUser(event)}>
-                    {Object.keys(USERS[0]).map(field =>{
+                    {Object.keys(POSTS[0]).map(field =>{
                     if(field ==="company" || field === "id" || field === 'address' ) return;
                      return <input className='form-control mt-2'
                         key={field}
@@ -91,26 +78,13 @@ const UserCards = () => {
                 </form>
                 }
         </div>
-        <div className="input-group mb-3">
-                <span className="input-group-text" id="basic-addon1">Search</span>
-                <input type="text"
-                    className="form-control"
-                    placeholder="Input Username"
-                    aria-label="Username"
-                    aria-describedby="basic-addon1"
-                    onChange={(event) => setSearch(event.target.value)} />
-            </div>
             {users.map(user => <div className="col" key={user.id}>
             <div className="card h-100">
                 <div className="card-body">
-                    <h5 className="card-title">{user.name}</h5>
                     <p className="card-text">
-                        <p>{user.username}</p>
-                        <p>{user.email}</p>
-                        <p>{user.phone}</p>
-                        <p>{user.website}</p>
-                        {/* {user?.company}
-                        {user?.address} */}
+                        <p>{user.userId}</p>
+                        <p>{user.title}</p>
+                        <p>{user.body}</p>
                     </p>
                 </div>
                 <div className="card-footer">
@@ -125,4 +99,4 @@ const UserCards = () => {
     );
 };
 
-export default UserCards;
+export default Posts;
